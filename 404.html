@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found — ntony4u.site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            cursor: default;
+        }
+
+        /* Эффект "свет в конце тоннеля" — оверлей, который реагирует на движение мыши */
+        .tunnel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                                        transparent 0%, 
+                                        transparent 60%, 
+                                        rgba(0, 0, 0, 0.85) 85%, 
+                                        rgba(0, 0, 0, 0.95) 100%);
+            transition: background 0.08s ease-out;
+        }
+
+        /* Эффект свечения при приближении к кнопке — дополнительный слой */
+        .glow-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 21;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        .glow-effect.active {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                                        rgba(255, 255, 255, 0.15) 0%, 
+                                        rgba(255, 255, 255, 0.05) 40%, 
+                                        transparent 70%);
+        }
+
+        .container {
+            z-index: 30;
+            position: relative;
+        }
+
+        .error-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s ease-in-out infinite alternate;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        /* Улучшенная пульсация 404 с масштабированием и свечением */
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 
+                             0 0 25px rgba(102, 126, 234, 0.3),
+                             0 0 35px rgba(118, 75, 162, 0.2);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 25px rgba(255, 255, 255, 0.6), 
+                             0 0 45px rgba(102, 126, 234, 0.5),
+                             0 0 60px rgba(118, 75, 162, 0.4);
+                transform: scale(1.03);
+            }
+            100% {
+                text-shadow: 0 0 40px rgba(255, 255, 255, 0.8), 
+                             0 0 60px rgba(102, 126, 234, 0.6),
+                             0 0 80px rgba(118, 75, 162, 0.5);
+                transform: scale(1.06);
+            }
+        }
+
+        .message {
+            font-size: 24px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s forwards 0.5s;
+        }
+
+        .submessage {
+            font-size: 18px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s forwards 1s;
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .home-link {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s forwards 1.5s;
+            position: relative;
+            overflow: hidden;
+            z-index: 31;
+            cursor: pointer;
+        }
+
+        .home-link::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+            z-index: -1;
+        }
+
+        .home-link:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .home-link:hover::before {
+            width: 500px;
+            height: 500px;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Декоративные элементы */
+        .floating {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-1 {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-2 {
+            top: 60%;
+            right: 15%;
+            animation-delay: -2s;
+        }
+
+        .floating-3 {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -4s;
+        }
+
+        .floating-4 {
+            top: 30%;
+            right: 25%;
+            width: 50px;
+            height: 50px;
+            animation-delay: -1s;
+            animation-duration: 8s;
+        }
+
+        .floating-5 {
+            bottom: 30%;
+            right: 35%;
+            width: 60px;
+            height: 60px;
+            animation-delay: -3s;
+            animation-duration: 7s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-20px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(10px) rotate(240deg);
+            }
+        }
+
+        /* Дополнительный эффект частиц при наведении на кнопку */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: 25;
+            animation: particleFade 0.6s ease-out forwards;
+        }
+
+        @keyframes particleFade {
+            0% {
+                opacity: 1;
+                transform: scale(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        /* Улучшенная читаемость при эффекте тоннеля */
+        .container * {
+            position: relative;
+            z-index: 31;
+        }
+    </style>
+</head>
+<body>
+    <!-- Эффект "свет в конце тоннеля" — затемнение по краям, светлый центр следует за мышью -->
+    <div class="tunnel-overlay" id="tunnelOverlay"></div>
+    
+    <!-- Дополнительный эффект свечения при приближении к кнопке -->
+    <div class="glow-effect" id="glowEffect"></div>
+
+    <!-- Декоративные плавающие элементы -->
+    <div class="floating floating-1"></div>
+    <div class="floating floating-2"></div>
+    <div class="floating floating-3"></div>
+    <div class="floating floating-4"></div>
+    <div class="floating floating-5"></div>
+
+    <div class="container">
+        <h1 class="error-title">Page Not Found</h1>
+        <div class="error-code">404</div>
+        <h2 class="message">Oops, got lost?</h2>
+        <p class="submessage">The page you're looking for has gone on a little internet adventure and hasn't returned yet.</p>
+        <p class="submessage">Don't worry — I'll help you find your way!</p>
+        <a href="/" class="home-link" id="homeLink">← Return to homepage</a>
+    </div>
+
+    <script>
+        // Эффект "свет в конце тоннеля" для всей страницы
+        const tunnelOverlay = document.getElementById('tunnelOverlay');
+        const glowEffect = document.getElementById('glowEffect');
+        const homeLink = document.getElementById('homeLink');
+        
+        // Переменные для отслеживания позиции мыши
+        let mouseX = 50;
+        let mouseY = 50;
+        let isNearButton = false;
+        let glowTimeout = null;
+        
+        // Обновление позиции мыши и эффекта тоннеля
+        function updateMousePosition(e) {
+            // Получаем координаты мыши относительно окна
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Вычисляем процентное положение относительно окна
+            mouseX = (x / window.innerWidth) * 100;
+            mouseY = (y / window.innerHeight) * 100;
+            
+            // Обновляем CSS переменные для тоннельного эффекта
+            tunnelOverlay.style.setProperty('--mouse-x', `${mouseX}%`);
+            tunnelOverlay.style.setProperty('--mouse-y', `${mouseY}%`);
+            
+            // Проверяем, находится ли мышь рядом с кнопкой
+            const buttonRect = homeLink.getBoundingClientRect();
+            const buffer = 80; // Зона приближения в пикселях
+            
+            const isNear = (x >= buttonRect.left - buffer && 
+                           x <= buttonRect.right + buffer && 
+                           y >= buttonRect.top - buffer && 
+                           y <= buttonRect.bottom + buffer);
+            
+            // Если состояние изменилось
+            if (isNear !== isNearButton) {
+                isNearButton = isNear;
+                
+                if (isNearButton) {
+                    // Мышь приблизилась к кнопке - включаем эффект свечения
+                    glowEffect.classList.add('active');
+                    glowEffect.style.setProperty('--mouse-x', `${mouseX}%`);
+                    glowEffect.style.setProperty('--mouse-y', `${mouseY}%`);
+                    
+                    // Создаём партиклы для дополнительного эффекта
+                    createParticles(x, y);
+                    
+                    // Усиливаем пульсацию 404
+                    const errorCode = document.querySelector('.error-code');
+                    errorCode.style.animation = 'none';
+                    errorCode.offsetHeight; // reflow
+                    errorCode.style.animation = 'pulse 1.2s ease-in-out infinite alternate';
+                    
+                    // Плавно увеличиваем яркость тоннеля в зоне кнопки
+                    tunnelOverlay.style.transition = 'background 0.15s ease-out';
+                } else {
+                    // Мышь удалилась от кнопки - выключаем эффект свечения
+                    glowEffect.classList.remove('active');
+                    
+                    // Возвращаем нормальную пульсацию
+                    const errorCode = document.querySelector('.error-code');
+                    errorCode.style.animation = 'none';
+                    errorCode.offsetHeight;
+                    errorCode.style.animation = 'pulse 2s ease-in-out infinite alternate';
+                    
+                    setTimeout(() => {
+                        tunnelOverlay.style.transition = '';
+                    }, 200);
+                }
+            } else if (isNearButton) {
+                // Если мышь рядом с кнопкой, обновляем позицию свечения
+                glowEffect.style.setProperty('--mouse-x', `${mouseX}%`);
+                glowEffect.style.setProperty('--mouse-y', `${mouseY}%`);
+                
+                // Периодически создаём партиклы при движении рядом с кнопкой
+                if (Math.random() < 0.3) {
+                    createParticles(x, y);
+                }
+            }
+        }
+        
+        // Функция создания светящихся частиц
+        function createParticles(x, y) {
+            const particleCount = Math.random() * 3 + 1;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Случайное смещение от точки мыши
+                const offsetX = (Math.random() - 0.5) * 40;
+                const offsetY = (Math.random() - 0.5) * 40;
+                
+                particle.style.left = (x + offsetX) + 'px';
+                particle.style.top = (y + offsetY) + 'px';
+                particle.style.width = Math.random() * 8 + 4 + 'px';
+                particle.style.height = particle.style.width;
+                
+                document.body.appendChild(particle);
+                
+                // Удаляем частицу после анимации
+                setTimeout(() => {
+                    if (particle && particle.parentNode) {
+                        particle.remove();
+                    }
+                }, 600);
+            }
+        }
+        
+        // Отслеживаем движение мыши по всей странице
+        document.addEventListener('mousemove', updateMousePosition);
+        
+        // Дополнительный эффект: при наведении на кнопку усиливаем свечение
+        homeLink.addEventListener('mouseenter', function(e) {
+            // Усиливаем эффект свечения
+            glowEffect.style.transition = 'background 0.1s ease';
+            glowEffect.classList.add('active');
+            
+            // Создаём всплеск частиц
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const rect = homeLink.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * 60;
+                    const y = rect.top + rect.height / 2 + (Math.random() - 0.5) * 30;
+                    createParticles(x, y);
+                }, i * 30);
+            }
+            
+            // Временно увеличиваем яркость тоннеля в центре
+            tunnelOverlay.style.setProperty('--mouse-x', `${mouseX}%`);
+            tunnelOverlay.style.setProperty('--mouse-y', `${mouseY}%`);
+        });
+        
+        homeLink.addEventListener('mouseleave', function() {
+            // Возвращаем нормальное состояние
+            setTimeout(() => {
+                if (!isNearButton) {
+                    glowEffect.classList.remove('active');
+                }
+                glowEffect.style.transition = '';
+            }, 100);
+        });
+        
+        // Добавляем эффект клика на кнопку
+        homeLink.addEventListener('click', function(e) {
+            // Создаём эффект "вспышки" при клике
+            const rect = homeLink.getBoundingClientRect();
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width;
+                    const y = rect.top + rect.height / 2 + (Math.random() - 0.5) * rect.height;
+                    createParticles(x, y);
+                }, i * 20);
+            }
+        });
+        
+        // Инициализация - устанавливаем начальную позицию мыши в центр
+        if (window.innerWidth && window.innerHeight) {
+            mouseX = 50;
+            mouseY = 50;
+            tunnelOverlay.style.setProperty('--mouse-x', '50%');
+            tunnelOverlay.style.setProperty('--mouse-y', '50%');
+        }
+        
+        // Адаптация к изменению размера окна
+        window.addEventListener('resize', function() {
+            // Ничего особенного не нужно, координаты пересчитаются при следующем движении мыши
+        });
+        
+        // Добавляем дополнительный эффект: случайные "искры" на странице для атмосферы
+        setInterval(() => {
+            if (!isNearButton && Math.random() < 0.1) {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                createParticles(x, y);
+            }
+        }, 3000);
+        
+        // Улучшенная пульсация с дополнительным эффектом мерцания
+        const errorCode = document.querySelector('.error-code');
+        let pulseScale = 1;
+        let increasing = true;
+        
+        // Добавляем лёгкое мерцание остальным элементам
+        setInterval(() => {
+            if (increasing) {
+                pulseScale += 0.003;
+                if (pulseScale >= 1.03) increasing = false;
+            } else {
+                pulseScale -= 0.003;
+                if (pulseScale <= 0.97) increasing = true;
+            }
+            
+            // Лёгкое мерцание для заголовка
+            const title = document.querySelector('.error-title');
+            if (title) {
+                const opacity = 0.85 + Math.sin(Date.now() / 1000) * 0.05;
+                title.style.opacity = opacity;
+            }
+        }, 50);
+        
+        console.log('✨ 404 page with tunnel effect and enhanced pulsation loaded ✨');
+    </script>
+</body>
+</html>
