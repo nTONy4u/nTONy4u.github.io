@@ -1,14 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Page Not Found — ntony4u.site</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
@@ -20,12 +21,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            overflow: hidden;
             position: relative;
-            cursor: default;
+            padding: 20px;
         }
 
-        /* Эффект "свет в конце тоннеля" — оверлей, который реагирует на движение мыши */
         .tunnel-overlay {
             position: fixed;
             top: 0;
@@ -34,465 +33,659 @@
             height: 100%;
             pointer-events: none;
             z-index: 20;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                                        transparent 0%, 
-                                        transparent 60%, 
-                                        rgba(0, 0, 0, 0.85) 85%, 
-                                        rgba(0, 0, 0, 0.95) 100%);
-            transition: background 0.08s ease-out;
-        }
-
-        /* Эффект свечения при приближении к кнопке — дополнительный слой */
-        .glow-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 21;
-            background: transparent;
-            transition: background 0.2s ease;
-        }
-
-        .glow-effect.active {
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                                        rgba(255, 255, 255, 0.15) 0%, 
-                                        rgba(255, 255, 255, 0.05) 40%, 
-                                        transparent 70%);
         }
 
         .container {
-            z-index: 30;
+            z-index: 33;
             position: relative;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .top-section {
+            margin-bottom: 33px;
         }
 
         .error-title {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: bold;
-            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 10px;
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         }
 
         .error-code {
-            font-size: 120px;
+            font-size: 100px;
             font-weight: bold;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             animation: pulse 2s ease-in-out infinite alternate;
             display: inline-block;
-            transition: transform 0.3s ease;
         }
 
-        /* Улучшенная пульсация 404 с масштабированием и свечением */
         @keyframes pulse {
             0% {
-                text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 
-                             0 0 25px rgba(102, 126, 234, 0.3),
-                             0 0 35px rgba(118, 75, 162, 0.2);
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 25px rgba(102, 126, 234, 0.3);
                 transform: scale(1);
             }
-            50% {
-                text-shadow: 0 0 25px rgba(255, 255, 255, 0.6), 
-                             0 0 45px rgba(102, 126, 234, 0.5),
-                             0 0 60px rgba(118, 75, 162, 0.4);
-                transform: scale(1.03);
-            }
             100% {
-                text-shadow: 0 0 40px rgba(255, 255, 255, 0.8), 
-                             0 0 60px rgba(102, 126, 234, 0.6),
-                             0 0 80px rgba(118, 75, 162, 0.5);
-                transform: scale(1.06);
+                text-shadow: 0 0 40px rgba(255, 255, 255, 0.6), 0 0 60px rgba(102, 126, 234, 0.5);
+                transform: scale(1.05);
             }
-        }
-
-        .message {
-            font-size: 24px;
-            margin-bottom: 30px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 1s forwards 0.5s;
         }
 
         .submessage {
-            font-size: 18px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 1s forwards 1s;
-            margin-bottom: 40px;
-            max-width: 600px;
-            line-height: 1.5;
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .home-link {
             display: inline-block;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            padding: 15px 30px;
+            padding: 14px 32px;
             border-radius: 50px;
             color: white;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.3s ease;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 1s forwards 1.5s;
             position: relative;
-            overflow: hidden;
             z-index: 31;
             cursor: pointer;
-        }
-
-        .home-link::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
-            z-index: -1;
+            letter-spacing: 1px;
         }
 
         .home-link:hover {
-            background: rgba(255, 255, 255, 0.35);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.8);
         }
 
-        .home-link:hover::before {
-            width: 500px;
-            height: 500px;
+        .game-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .game-side-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 130px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Декоративные элементы */
+        .panel-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            margin-bottom: 10px;
+        }
+
+        .panel-value {
+            font-size: 42px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .panel-sub {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .game-status-panel {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff9800;
+            margin-right: 8px;
+        }
+
+        .status-indicator.playing {
+            background: #4caf50;
+            animation: blink 1s infinite;
+        }
+
+        .status-indicator.gameover {
+            background: #f44336;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .restart-btn-panel {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .restart-btn-panel:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .game-area {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        canvas {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-hint {
+            font-size: 12px;
+            margin-top: 12px;
+            text-align: center;
+            opacity: 0.6;
+        }
+
         .floating {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.08);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 50%;
             animation: float 6s ease-in-out infinite;
             pointer-events: none;
             z-index: 1;
         }
 
-        .floating-1 {
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .floating-2 {
-            top: 60%;
-            right: 15%;
-            animation-delay: -2s;
-        }
-
-        .floating-3 {
-            bottom: 20%;
-            left: 20%;
-            animation-delay: -4s;
-        }
-
-        .floating-4 {
-            top: 30%;
-            right: 25%;
-            width: 50px;
-            height: 50px;
-            animation-delay: -1s;
-            animation-duration: 8s;
-        }
-
-        .floating-5 {
-            bottom: 30%;
-            right: 35%;
-            width: 60px;
-            height: 60px;
-            animation-delay: -3s;
-            animation-duration: 7s;
-        }
+        .floating-1 { top: 15%; left: 5%; animation-delay: 0s; }
+        .floating-2 { top: 70%; right: 8%; animation-delay: -2s; }
+        .floating-3 { bottom: 15%; left: 15%; animation-delay: -4s; }
 
         @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            33% {
-                transform: translateY(-20px) rotate(120deg);
-            }
-            66% {
-                transform: translateY(10px) rotate(240deg);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(120deg); }
+            66% { transform: translateY(8px) rotate(240deg); }
         }
 
-        /* Дополнительный эффект частиц при наведении на кнопку */
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
-            border-radius: 50%;
-            z-index: 25;
-            animation: particleFade 0.6s ease-out forwards;
-        }
-
-        @keyframes particleFade {
-            0% {
-                opacity: 1;
-                transform: scale(0);
+        @media (max-width: 800px) {
+            .game-container {
+                flex-direction: column;
             }
-            100% {
-                opacity: 0;
-                transform: scale(1.5);
+            .game-side-panel {
+                width: 100%;
+                text-align: center;
             }
-        }
-
-        /* Улучшенная читаемость при эффекте тоннеля */
-        .container * {
-            position: relative;
-            z-index: 31;
+            .panel-value {
+                font-size: 32px;
+            }
+            .error-code { font-size: 70px; }
+            .error-title { font-size: 24px; }
+            canvas { width: 100%; height: auto; }
         }
     </style>
 </head>
 <body>
-    <!-- Эффект "свет в конце тоннеля" — затемнение по краям, светлый центр следует за мышью -->
     <div class="tunnel-overlay" id="tunnelOverlay"></div>
     
-    <!-- Дополнительный эффект свечения при приближении к кнопке -->
-    <div class="glow-effect" id="glowEffect"></div>
-
-    <!-- Декоративные плавающие элементы -->
     <div class="floating floating-1"></div>
     <div class="floating floating-2"></div>
     <div class="floating floating-3"></div>
-    <div class="floating floating-4"></div>
-    <div class="floating floating-5"></div>
 
     <div class="container">
-        <h1 class="error-title">Page Not Found</h1>
-        <div class="error-code">404</div>
-        <h2 class="message">Oops, got lost?</h2>
-        <p class="submessage">The page you're looking for has gone on a little internet adventure and hasn't returned yet.</p>
-        <p class="submessage">Don't worry — I'll help you find your way!</p>
-        <a href="/" class="home-link" id="homeLink">← Return to homepage</a>
+        <div class="top-section">
+            <h1 class="error-title">Page Not Found</h1>
+            <div class="error-code">404</div>
+            <p class="submessage">The page went on an adventure... but you can go home!</p>
+            <a href="/" class="home-link" id="homeLink">← Return to homepage</a>
+        </div>
+
+        <div class="game-container">
+            <div class="game-side-panel panel-left">
+                <div class="panel-label">🎯 SCORE</div>
+                <div class="panel-value" id="panelScore">0</div>
+                <div class="panel-sub">points</div>
+                
+                <div style="margin-top: 20px;"></div>
+                
+                <div class="panel-label">🏆 BEST SCORE</div>
+                <div class="panel-value" id="panelHighscore">0</div>
+                <div class="panel-sub">all time</div>
+            </div>
+
+            <div class="game-area">
+                <canvas id="gameCanvas" width="500" height="300" style="width:100%; max-width:500px; height:auto; cursor:pointer"></canvas>
+                <div class="game-hint">✨ Click on the glowing light to start and play! ✨</div>
+            </div>
+
+            <div class="game-side-panel panel-right">
+                <div class="panel-label">⏱️ TIME PLAYED</div>
+                <div class="panel-value" id="panelTime" style="font-family: monospace; font-size: 32px;">00:00</div>
+                <div class="panel-sub">seconds</div>
+                
+                <div class="game-status-panel">
+                    <div class="panel-label">
+                        <span class="status-indicator" id="statusIndicator"></span> STATUS
+                    </div>
+                    <div id="gameStatusText">CLICK TO START</div>
+                    <button class="restart-btn-panel" id="restartBtnPanel">🔄 NEW GAME</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Эффект "свет в конце тоннеля" для всей страницы
+        // ========== ЭФФЕКТ ТОННЕЛЯ ==========
         const tunnelOverlay = document.getElementById('tunnelOverlay');
-        const glowEffect = document.getElementById('glowEffect');
-        const homeLink = document.getElementById('homeLink');
+        const homeLinkBtn = document.getElementById('homeLink');
         
-        // Переменные для отслеживания позиции мыши
-        let mouseX = 50;
-        let mouseY = 50;
-        let isNearButton = false;
-        let glowTimeout = null;
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
         
-        // Обновление позиции мыши и эффекта тоннеля
-        function updateMousePosition(e) {
-            // Получаем координаты мыши относительно окна
-            const x = e.clientX;
-            const y = e.clientY;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        function updateTunnelEffect() {
+            const buttonRect = homeLinkBtn.getBoundingClientRect();
+            const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+            const buttonCenterY = buttonRect.top + buttonRect.height / 2;
             
-            // Вычисляем процентное положение относительно окна
-            mouseX = (x / window.innerWidth) * 100;
-            mouseY = (y / window.innerHeight) * 100;
+            const dx = mouseX - buttonCenterX;
+            const dy = mouseY - buttonCenterY;
+            const distanceToButton = Math.sqrt(dx * dx + dy * dy);
             
-            // Обновляем CSS переменные для тоннельного эффекта
-            tunnelOverlay.style.setProperty('--mouse-x', `${mouseX}%`);
-            tunnelOverlay.style.setProperty('--mouse-y', `${mouseY}%`);
+            const maxDistance = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+            let normalized = Math.min(distanceToButton / maxDistance, 1);
             
-            // Проверяем, находится ли мышь рядом с кнопкой
-            const buttonRect = homeLink.getBoundingClientRect();
-            const buffer = 80; // Зона приближения в пикселях
+            let radiusPx = 589 - (normalized * 589);
+            radiusPx = Math.max(33, Math.min(589, radiusPx));
             
-            const isNear = (x >= buttonRect.left - buffer && 
-                           x <= buttonRect.right + buffer && 
-                           y >= buttonRect.top - buffer && 
-                           y <= buttonRect.bottom + buffer);
+            let darkness = 0.2 + (normalized * 0.75);
+            darkness = Math.min(0.95, darkness);
             
-            // Если состояние изменилось
-            if (isNear !== isNearButton) {
-                isNearButton = isNear;
+            const gradient = `radial-gradient(circle at ${mouseX}px ${mouseY}px, 
+                                transparent 0px, 
+                                transparent ${radiusPx}px, 
+                                rgba(0, 0, 0, ${darkness}) ${radiusPx + 20}px, 
+                                rgba(0, 0, 0, 0.95) 100%)`;
+            
+            tunnelOverlay.style.background = gradient;
+            
+            if (distanceToButton < 150) {
+                const intensity = Math.min(1, (150 - distanceToButton) / 150);
+                homeLinkBtn.style.boxShadow = `0 0 ${15 + intensity * 35}px rgba(255, 255, 255, ${0.2 + intensity * 0.6})`;
+                homeLinkBtn.style.transform = `scale(${1 + intensity * 0.02})`;
+            } else {
+                homeLinkBtn.style.boxShadow = '';
+                homeLinkBtn.style.transform = '';
+            }
+        }
+        
+        function animateTunnel() {
+            updateTunnelEffect();
+            requestAnimationFrame(animateTunnel);
+        }
+        animateTunnel();
+
+        // ========== ИГРА ==========
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = 500;
+        canvas.height = 300;
+        
+        let score = 0;
+        let highscore = localStorage.getItem('catchLightHighscore') || 0;
+        let gameActive = false;
+        let gameStarted = false;
+        let gameTimeSeconds = 0;
+        let gameTimer = null;
+        let idleMoveInterval = null;
+        
+        let firefly = {
+            x: 0,
+            y: 0,
+            radius: 16,
+            visible: true,
+            disappearTimeout: null,
+            pulse: 0
+        };
+        
+        const panelScore = document.getElementById('panelScore');
+        const panelHighscore = document.getElementById('panelHighscore');
+        const panelTime = document.getElementById('panelTime');
+        const gameStatusText = document.getElementById('gameStatusText');
+        const statusIndicator = document.getElementById('statusIndicator');
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function updatePanels() {
+            panelScore.textContent = score;
+            panelHighscore.textContent = highscore;
+            panelTime.textContent = formatTime(gameTimeSeconds);
+        }
+        
+        function addScore() {
+            score++;
+            if (score > highscore) {
+                highscore = score;
+                localStorage.setItem('catchLightHighscore', highscore);
+            }
+            updatePanels();
+        }
+        
+        function randomMoveFirefly() {
+            if (!gameStarted && !gameActive) {
+                firefly.x = Math.random() * (canvas.width - firefly.radius * 2 - 20) + firefly.radius + 10;
+                firefly.y = Math.random() * (canvas.height - firefly.radius * 2 - 20) + firefly.radius + 10;
+                firefly.pulse = 1;
+            }
+        }
+        
+        function startIdleMovement() {
+            if (idleMoveInterval) clearInterval(idleMoveInterval);
+            idleMoveInterval = setInterval(() => {
+                randomMoveFirefly();
+            }, 1500);
+        }
+        
+        function stopIdleMovement() {
+            if (idleMoveInterval) {
+                clearInterval(idleMoveInterval);
+                idleMoveInterval = null;
+            }
+        }
+        
+        function gameOver() {
+            if (!gameActive) return;
+            
+            gameActive = false;
+            gameStarted = false;
+            
+            if (firefly.disappearTimeout) clearTimeout(firefly.disappearTimeout);
+            if (gameTimer) clearInterval(gameTimer);
+            gameTimer = null;
+            
+            firefly.visible = true;
+            randomMoveFirefly();
+            
+            gameStatusText.textContent = 'GAME OVER';
+            statusIndicator.className = 'status-indicator gameover';
+            
+            startIdleMovement();
+        }
+        
+        function showFirefly() {
+            if (!gameActive) return;
+            
+            if (firefly.disappearTimeout) clearTimeout(firefly.disappearTimeout);
+            
+            firefly.x = Math.random() * (canvas.width - firefly.radius * 2 - 20) + firefly.radius + 10;
+            firefly.y = Math.random() * (canvas.height - firefly.radius * 2 - 20) + firefly.radius + 10;
+            firefly.visible = true;
+            firefly.pulse = 1;
+            
+            firefly.disappearTimeout = setTimeout(() => {
+                if (firefly.visible && gameActive) {
+                    firefly.visible = false;
+                    gameOver();
+                }
+            }, 1200);
+        }
+        
+        function startGame() {
+            stopIdleMovement();
+            
+            if (gameTimer) clearInterval(gameTimer);
+            if (firefly.disappearTimeout) clearTimeout(firefly.disappearTimeout);
+            
+            gameActive = true;
+            gameStarted = true;
+            score = 0;
+            gameTimeSeconds = 0;
+            updatePanels();
+            
+            gameStatusText.textContent = 'PLAYING';
+            statusIndicator.className = 'status-indicator playing';
+            
+            gameTimer = setInterval(() => {
+                if (gameActive) {
+                    gameTimeSeconds++;
+                    panelTime.textContent = formatTime(gameTimeSeconds);
+                }
+            }, 1000);
+            
+            showFirefly();
+        }
+        
+        function checkCatch(e) {
+            if (!firefly.visible) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            let clientX, clientY;
+            
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            const canvasX = (clientX - rect.left) * scaleX;
+            const canvasY = (clientY - rect.top) * scaleY;
+            
+            if (canvasX < 0 || canvasX > canvas.width || canvasY < 0 || canvasY > canvas.height) return;
+            
+            const dx = canvasX - firefly.x;
+            const dy = canvasY - firefly.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance <= firefly.radius && firefly.visible) {
+                if (!gameStarted) {
+                    startGame();
+                    return;
+                }
                 
-                if (isNearButton) {
-                    // Мышь приблизилась к кнопке - включаем эффект свечения
-                    glowEffect.classList.add('active');
-                    glowEffect.style.setProperty('--mouse-x', `${mouseX}%`);
-                    glowEffect.style.setProperty('--mouse-y', `${mouseY}%`);
-                    
-                    // Создаём партиклы для дополнительного эффекта
-                    createParticles(x, y);
-                    
-                    // Усиливаем пульсацию 404
-                    const errorCode = document.querySelector('.error-code');
-                    errorCode.style.animation = 'none';
-                    errorCode.offsetHeight; // reflow
-                    errorCode.style.animation = 'pulse 1.2s ease-in-out infinite alternate';
-                    
-                    // Плавно увеличиваем яркость тоннеля в зоне кнопки
-                    tunnelOverlay.style.transition = 'background 0.15s ease-out';
-                } else {
-                    // Мышь удалилась от кнопки - выключаем эффект свечения
-                    glowEffect.classList.remove('active');
-                    
-                    // Возвращаем нормальную пульсацию
-                    const errorCode = document.querySelector('.error-code');
-                    errorCode.style.animation = 'none';
-                    errorCode.offsetHeight;
-                    errorCode.style.animation = 'pulse 2s ease-in-out infinite alternate';
+                if (!gameActive) return;
+                
+                addScore();
+                
+                if (firefly.disappearTimeout) clearTimeout(firefly.disappearTimeout);
+                firefly.visible = false;
+                firefly.pulse = 1;
+                
+                const absX = rect.left + (canvasX / canvas.width) * rect.width;
+                const absY = rect.top + (canvasY / canvas.height) * rect.height;
+                for (let i = 0; i < 8; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.width = Math.random() * 6 + 3 + 'px';
+                    particle.style.height = particle.style.width;
+                    particle.style.background = 'radial-gradient(circle, #fff, #ffcc44)';
+                    particle.style.borderRadius = '50%';
+                    particle.style.left = (absX + (Math.random() - 0.5) * 40) + 'px';
+                    particle.style.top = (absY + (Math.random() - 0.5) * 40) + 'px';
+                    particle.style.zIndex = '999';
+                    particle.style.opacity = '1';
+                    particle.style.transition = 'all 0.5s ease-out';
+                    document.body.appendChild(particle);
                     
                     setTimeout(() => {
-                        tunnelOverlay.style.transition = '';
-                    }, 200);
+                        particle.style.opacity = '0';
+                        particle.style.transform = 'scale(2)';
+                        setTimeout(() => particle.remove(), 500);
+                    }, 10);
                 }
-            } else if (isNearButton) {
-                // Если мышь рядом с кнопкой, обновляем позицию свечения
-                glowEffect.style.setProperty('--mouse-x', `${mouseX}%`);
-                glowEffect.style.setProperty('--mouse-y', `${mouseY}%`);
                 
-                // Периодически создаём партиклы при движении рядом с кнопкой
-                if (Math.random() < 0.3) {
-                    createParticles(x, y);
-                }
+                setTimeout(() => {
+                    if (gameActive) showFirefly();
+                }, 250);
             }
         }
         
-        // Функция создания светящихся частиц
-        function createParticles(x, y) {
-            const particleCount = Math.random() * 3 + 1;
+        function resetGame() {
+            stopIdleMovement();
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                // Случайное смещение от точки мыши
-                const offsetX = (Math.random() - 0.5) * 40;
-                const offsetY = (Math.random() - 0.5) * 40;
-                
-                particle.style.left = (x + offsetX) + 'px';
-                particle.style.top = (y + offsetY) + 'px';
-                particle.style.width = Math.random() * 8 + 4 + 'px';
-                particle.style.height = particle.style.width;
-                
-                document.body.appendChild(particle);
-                
-                // Удаляем частицу после анимации
-                setTimeout(() => {
-                    if (particle && particle.parentNode) {
-                        particle.remove();
-                    }
-                }, 600);
-            }
+            if (gameTimer) clearInterval(gameTimer);
+            if (firefly.disappearTimeout) clearTimeout(firefly.disappearTimeout);
+            
+            gameActive = false;
+            gameStarted = false;
+            score = 0;
+            gameTimeSeconds = 0;
+            firefly.visible = true;
+            randomMoveFirefly();
+            updatePanels();
+            
+            gameStatusText.textContent = 'CLICK TO START';
+            statusIndicator.className = 'status-indicator';
+            
+            startIdleMovement();
         }
         
-        // Отслеживаем движение мыши по всей странице
-        document.addEventListener('mousemove', updateMousePosition);
-        
-        // Дополнительный эффект: при наведении на кнопку усиливаем свечение
-        homeLink.addEventListener('mouseenter', function(e) {
-            // Усиливаем эффект свечения
-            glowEffect.style.transition = 'background 0.1s ease';
-            glowEffect.classList.add('active');
+        function draw() {
+            if (!ctx) return;
             
-            // Создаём всплеск частиц
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => {
-                    const rect = homeLink.getBoundingClientRect();
-                    const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * 60;
-                    const y = rect.top + rect.height / 2 + (Math.random() - 0.5) * 30;
-                    createParticles(x, y);
-                }, i * 30);
-            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Временно увеличиваем яркость тоннеля в центре
-            tunnelOverlay.style.setProperty('--mouse-x', `${mouseX}%`);
-            tunnelOverlay.style.setProperty('--mouse-y', `${mouseY}%`);
-        });
-        
-        homeLink.addEventListener('mouseleave', function() {
-            // Возвращаем нормальное состояние
-            setTimeout(() => {
-                if (!isNearButton) {
-                    glowEffect.classList.remove('active');
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            for (let i = 0; i < 80; i++) {
+                if (Math.random() > 0.97) {
+                    ctx.beginPath();
+                    ctx.arc((i * 131) % canvas.width, (i * 253) % canvas.height, 1.2, 0, Math.PI * 2);
+                    ctx.fill();
                 }
-                glowEffect.style.transition = '';
-            }, 100);
-        });
-        
-        // Добавляем эффект клика на кнопку
-        homeLink.addEventListener('click', function(e) {
-            // Создаём эффект "вспышки" при клике
-            const rect = homeLink.getBoundingClientRect();
-            for (let i = 0; i < 15; i++) {
-                setTimeout(() => {
-                    const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width;
-                    const y = rect.top + rect.height / 2 + (Math.random() - 0.5) * rect.height;
-                    createParticles(x, y);
-                }, i * 20);
-            }
-        });
-        
-        // Инициализация - устанавливаем начальную позицию мыши в центр
-        if (window.innerWidth && window.innerHeight) {
-            mouseX = 50;
-            mouseY = 50;
-            tunnelOverlay.style.setProperty('--mouse-x', '50%');
-            tunnelOverlay.style.setProperty('--mouse-y', '50%');
-        }
-        
-        // Адаптация к изменению размера окна
-        window.addEventListener('resize', function() {
-            // Ничего особенного не нужно, координаты пересчитаются при следующем движении мыши
-        });
-        
-        // Добавляем дополнительный эффект: случайные "искры" на странице для атмосферы
-        setInterval(() => {
-            if (!isNearButton && Math.random() < 0.1) {
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * window.innerHeight;
-                createParticles(x, y);
-            }
-        }, 3000);
-        
-        // Улучшенная пульсация с дополнительным эффектом мерцания
-        const errorCode = document.querySelector('.error-code');
-        let pulseScale = 1;
-        let increasing = true;
-        
-        // Добавляем лёгкое мерцание остальным элементам
-        setInterval(() => {
-            if (increasing) {
-                pulseScale += 0.003;
-                if (pulseScale >= 1.03) increasing = false;
-            } else {
-                pulseScale -= 0.003;
-                if (pulseScale <= 0.97) increasing = true;
             }
             
-            // Лёгкое мерцание для заголовка
-            const title = document.querySelector('.error-title');
-            if (title) {
-                const opacity = 0.85 + Math.sin(Date.now() / 1000) * 0.05;
-                title.style.opacity = opacity;
+            if (firefly.visible) {
+                const pulseSize = firefly.pulse > 0 ? 1 + firefly.pulse * 0.3 : 1 + Math.sin(Date.now() * 0.012) * 0.1;
+                if (firefly.pulse > 0) firefly.pulse -= 0.05;
+                
+                const currentRadius = firefly.radius * pulseSize;
+                
+                const gradient = ctx.createRadialGradient(firefly.x, firefly.y, 3, firefly.x, firefly.y, currentRadius + 18);
+                gradient.addColorStop(0, 'rgba(255, 240, 150, 0.9)');
+                gradient.addColorStop(0.4, 'rgba(255, 200, 80, 0.5)');
+                gradient.addColorStop(1, 'rgba(255, 100, 50, 0)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(firefly.x, firefly.y, currentRadius + 18, 0, Math.PI * 2);
+                ctx.fill();
+                
+                const coreGradient = ctx.createRadialGradient(firefly.x - 3, firefly.y - 3, 2, firefly.x, firefly.y, currentRadius);
+                coreGradient.addColorStop(0, '#ffffdd');
+                coreGradient.addColorStop(0.5, '#ffcc55');
+                coreGradient.addColorStop(1, '#ff8844');
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(firefly.x, firefly.y, currentRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(firefly.x - 5, firefly.y - 4, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(firefly.x + 5, firefly.y - 4, 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#2c1810';
+                ctx.beginPath();
+                ctx.arc(firefly.x - 5.5, firefly.y - 4.5, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(firefly.x + 4.5, firefly.y - 4.5, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.arc(firefly.x, firefly.y + 4, 7, 0.1, Math.PI - 0.1);
+                ctx.strokeStyle = '#aa6633';
+                ctx.lineWidth = 1.8;
+                ctx.stroke();
+                
+                ctx.fillStyle = 'rgba(255, 100, 100, 0.4)';
+                ctx.beginPath();
+                ctx.ellipse(firefly.x - 9, firefly.y + 2, 3, 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(firefly.x + 9, firefly.y + 2, 3, 2, 0, 0, Math.PI * 2);
+                ctx.fill();
             }
-        }, 50);
+            
+            // НАДПИСЬ GAME OVER НА КАНВАСЕ
+            if (!gameActive && gameStatusText.textContent === 'GAME OVER') {
+                ctx.font = 'bold 20px "Segoe UI"';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                ctx.shadowBlur = 8;
+                ctx.textAlign = 'center';
+                ctx.fillText('💀 GAME OVER 💀', canvas.width / 2, canvas.height / 2);
+                ctx.shadowBlur = 0;
+                ctx.textAlign = 'left';
+            }
+        }
         
-        console.log('✨ 404 page with tunnel effect and enhanced pulsation loaded ✨');
+        function animate() {
+            draw();
+            requestAnimationFrame(animate);
+        }
+        
+        canvas.addEventListener('click', checkCatch);
+        canvas.addEventListener('touchstart', checkCatch, { passive: false });
+        
+        const restartBtn = document.getElementById('restartBtnPanel');
+        if (restartBtn) restartBtn.addEventListener('click', () => {
+            resetGame();
+        });
+        
+        randomMoveFirefly();
+        startIdleMovement();
+        updatePanels();
+        animate();
+        
+        console.log('✨ Tunnel: 589px on button, 33px far | GAME OVER text on canvas ✨');
     </script>
 </body>
 </html>
